@@ -8,5 +8,14 @@
       ],
       "env": {}
     }
+  },
+  "shrimp-task-manager": {
+    "command": "node",
+    "args": ["D:/my-workspace/notion-cms-project/mcp-shrimp-task-manager/dist/index.js"],
+    "env": {
+      "DATA_DIR": "D:/my-workspace/notion-cms-project/shrimp_data",
+      "TEMPLATES_USE": "en",
+      "ENABLE_GUI": "false"
+    }
   }
 }
