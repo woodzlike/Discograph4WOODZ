@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // mcp-shrimp-task-manager는 별도로 설치된 MCP 서버 도구 코드라 앱 lint/typecheck 대상이 아니다.
+    "mcp-shrimp-task-manager/**",
   ]),
 ]);
 
