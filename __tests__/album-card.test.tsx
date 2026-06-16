@@ -6,10 +6,17 @@ import type { SpotifyAlbum } from "@/types/spotify";
 import type { CurationData } from "@/types/notion";
 
 // next/image는 jsdom 환경에서 최적화 로직 없이 단순 img로 렌더링되도록 모킹한다
+// priority 값은 data-priority 속성으로 노출해 테스트에서 검증할 수 있게 한다
 vi.mock("next/image", () => ({
   default: (props: Record<string, unknown>) => {
     // eslint-disable-next-line @next/next/no-img-element
-    return <img alt={props.alt as string} src={props.src as string} />;
+    return (
+      <img
+        alt={props.alt as string}
+        src={props.src as string}
+        data-priority={String(props.priority ?? false)}
+      />
+    );
   },
 }));
 
@@ -66,5 +73,23 @@ describe("AlbumCard", () => {
     render(<AlbumCard album={baseAlbum} curation={curation} />);
 
     expect(screen.queryByRole("img", { name: /별점/ })).not.toBeInTheDocument();
+  });
+
+  it("priority prop을 전달하지 않으면 기본값 false로 next/image에 전달된다", () => {
+    render(<AlbumCard album={baseAlbum} curation={undefined} />);
+
+    expect(screen.getByAltText("WOODZ - SOLO 앨범 커버")).toHaveAttribute(
+      "data-priority",
+      "false"
+    );
+  });
+
+  it("priority={true}를 전달하면 next/image에도 그대로 전달된다", () => {
+    render(<AlbumCard album={baseAlbum} curation={undefined} priority />);
+
+    expect(screen.getByAltText("WOODZ - SOLO 앨범 커버")).toHaveAttribute(
+      "data-priority",
+      "true"
+    );
   });
 });

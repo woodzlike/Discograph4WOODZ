@@ -11,10 +11,12 @@ interface AlbumCardProps {
   album: SpotifyAlbum
   /** Notion 큐레이션 데이터. 없으면 배지/별점을 렌더링하지 않는다 */
   curation?: CurationData
+  /** LCP 최적화를 위해 above-the-fold(첫 행) 카드에만 true로 전달한다. 기본값 false */
+  priority?: boolean
 }
 
 /** Spotify 앨범 정보와 Notion 큐레이션 데이터를 함께 보여주는 카드 */
-export function AlbumCard({ album, curation }: AlbumCardProps) {
+export function AlbumCard({ album, curation, priority = false }: AlbumCardProps) {
   const coverImage = album.images[0]
   // release_date_precision이 "year"가 아니어도 앞 4자리는 항상 연도를 나타낸다
   const releaseYear = album.release_date.slice(0, 4)
@@ -30,6 +32,7 @@ export function AlbumCard({ album, curation }: AlbumCardProps) {
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
               className="object-cover"
+              priority={priority}
             />
           ) : null}
 

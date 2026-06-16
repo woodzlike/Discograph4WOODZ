@@ -52,6 +52,12 @@ async function getDataSourceId(): Promise<string> {
  * 큐레이션 데이터베이스 전체를 조회하는 fetch 래퍼.
  * 페이지네이션(`start_cursor`)을 한 번에 처리해 모든 레코드를 모아서 반환한다.
  * 레코드를 `CurationData`로 가공하는 로직은 Phase 2의 `getCurationData()`에서 담당한다.
+ *
+ * 캐싱 안내: `@notionhq/client`(v5)는 내부적으로 fetch 호출 시 자체 정의한
+ * `init`(method/headers/body/agent)만 구성해 전달하므로, Next.js의
+ * `next: { revalidate }` 캐시 옵션을 SDK 레벨에서 끼워 넣을 통로가 없다.
+ * 따라서 이 함수를 호출하는 라우트(예: `app/page.tsx`)에서
+ * `export const revalidate = 3600`(라우트 세그먼트 캐싱)으로 1시간 캐싱 정책을 적용한다.
  */
 export async function queryNotionDatabase(): Promise<PageObjectResponse[]> {
   const dataSourceId = await getDataSourceId();

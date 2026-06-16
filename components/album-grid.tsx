@@ -21,6 +21,11 @@ interface AlbumGridProps {
 // 정확한 EP 여부는 추후 Notion 큐레이션 데이터 등으로 보완이 필요하다.
 const EP_MAX_TRACK_COUNT = 6
 
+// 데스크탑 기준 그리드가 4열(lg:grid-cols-4)이므로 첫 행에 해당하는 앨범 수만큼만
+// priority를 부여해 LCP를 최적화한다. 전체 카드에 priority를 주면 우선순위 의미가 사라지므로
+// above-the-fold로 간주되는 첫 행 개수만 상수로 분리해 관리한다.
+const PRIORITY_CARD_COUNT = 4
+
 /** 필터 탭 값에 맞춰 앨범 목록을 분류한다 */
 function filterAlbums(albums: SpotifyAlbum[], filter: AlbumFilterValue): SpotifyAlbum[] {
   switch (filter) {
@@ -50,9 +55,13 @@ export function AlbumGrid({ albums, curationMap }: AlbumGridProps) {
       <FilterTabs activeTab={activeTab} onTabChange={setActiveTab} />
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-        {filteredAlbums.map((album) => (
+        {filteredAlbums.map((album, index) => (
           <Link key={album.id} href={`/album/${album.id}`}>
-            <AlbumCard album={album} curation={curationMap.get(album.id)} />
+            <AlbumCard
+              album={album}
+              curation={curationMap.get(album.id)}
+              priority={index < PRIORITY_CARD_COUNT}
+            />
           </Link>
         ))}
       </div>

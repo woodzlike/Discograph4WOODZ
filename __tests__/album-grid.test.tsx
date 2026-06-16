@@ -7,10 +7,17 @@ import type { SpotifyAlbum } from "@/types/spotify";
 import type { CurationDataMap } from "@/types/notion";
 
 // next/image는 jsdom 환경에서 단순 img로 렌더링되도록 모킹한다
+// priority 값은 data-priority 속성으로 노출해 테스트에서 검증할 수 있게 한다
 vi.mock("next/image", () => ({
   default: (props: Record<string, unknown>) => {
     // eslint-disable-next-line @next/next/no-img-element
-    return <img alt={props.alt as string} src={props.src as string} />;
+    return (
+      <img
+        alt={props.alt as string}
+        src={props.src as string}
+        data-priority={String(props.priority ?? false)}
+      />
+    );
   },
 }));
 
@@ -83,5 +90,24 @@ describe("AlbumGrid", () => {
 
     const link = screen.getByText("정규앨범 1").closest("a");
     expect(link).toHaveAttribute("href", "/album/regular-1");
+  });
+
+  it("데스크탑 첫 행(4열)에 해당하는 앨범에만 priority가 true로 전달된다", () => {
+    // 4열 그리드를 가득 채우고 한 장 더 있는 상황을 만들어 경계값을 검증한다
+    const manyAlbums: SpotifyAlbum[] = [
+      createAlbum({ id: "album-1", name: "앨범 1" }),
+      createAlbum({ id: "album-2", name: "앨범 2" }),
+      createAlbum({ id: "album-3", name: "앨범 3" }),
+      createAlbum({ id: "album-4", name: "앨범 4" }),
+      createAlbum({ id: "album-5", name: "앨범 5" }),
+    ];
+
+    render(<AlbumGrid albums={manyAlbums} curationMap={emptyCurationMap} />);
+
+    const priorityFlags = manyAlbums.map(
+      (album) => screen.getByAltText(`${album.name} 앨범 커버`).getAttribute("data-priority")
+    );
+
+    expect(priorityFlags).toEqual(["true", "true", "true", "true", "false"]);
   });
 });
