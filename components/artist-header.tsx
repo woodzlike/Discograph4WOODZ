@@ -1,4 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { ThemeToggle } from "@/components/theme-toggle"
 import type { SpotifyArtist } from "@/types/spotify"
 
 interface ArtistHeaderProps {
@@ -21,24 +22,28 @@ export function ArtistHeader({ artist }: ArtistHeaderProps) {
   const followersTotal = artist.followers?.total
 
   return (
-    <header className="flex items-center gap-4">
-      <Avatar size="lg" className="size-20 sm:size-24">
-        <AvatarImage src={profileImage?.url} alt={`${artist.name} 프로필 이미지`} />
-        <AvatarFallback>{artist.name.slice(0, 1)}</AvatarFallback>
-      </Avatar>
+    <header className="flex items-center justify-between gap-4">
+      <div className="flex items-center gap-4">
+        <Avatar size="lg" className="size-20 sm:size-24">
+          <AvatarImage src={profileImage?.url} alt={`${artist.name} 프로필 이미지`} />
+          <AvatarFallback>{artist.name.slice(0, 1)}</AvatarFallback>
+        </Avatar>
 
-      <div className="flex flex-col gap-1">
-        <h1 className="font-heading text-2xl font-semibold text-foreground sm:text-3xl">
-          {artist.name}
-        </h1>
+        <div className="flex flex-col gap-1">
+          <h1 className="font-heading text-2xl font-semibold text-foreground sm:text-3xl">
+            {artist.name}
+          </h1>
 
-        {/* followers.total이 없으면 팔로워 정보를 표시하지 않는다 */}
-        {followersTotal != null ? (
-          <p className="text-sm text-muted-foreground">
-            팔로워 {formatFollowers(followersTotal)}명
-          </p>
-        ) : null}
+          {/* followers.total이 없으면 팔로워 정보를 표시하지 않는다 */}
+          {followersTotal != null ? (
+            <p className="text-sm text-muted-foreground">
+              팔로워 {formatFollowers(followersTotal)}명
+            </p>
+          ) : null}
+        </div>
       </div>
+
+      <ThemeToggle />
     </header>
   )
 }
