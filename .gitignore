@@ -43,3 +43,6 @@ next-env.d.ts
 # 로컬 MCP 도구 (별도 git 저장소, 프로젝트 소스 아님)
 /mcp-shrimp-task-manager/
 /shrimp_data/
+
+# Playwright MCP 검증 산출물 (스크린샷/스냅샷, 매 검증마다 생성되는 임시 파일)
+/.playwright-mcp/
