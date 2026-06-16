@@ -3,6 +3,7 @@ import type {
   DatabaseObjectResponse,
   PageObjectResponse,
 } from "@notionhq/client/build/src/api-endpoints";
+import type { CurationData, CurationDataMap } from "@/types/notion";
 
 const notionToken = process.env.NOTION_TOKEN;
 const notionDatabaseId = process.env.NOTION_DATABASE_ID;
@@ -68,4 +69,92 @@ export async function queryNotionDatabase(): Promise<PageObjectResponse[]> {
   } while (cursor);
 
   return results;
+}
+
+/**
+ * Notion 페이지의 `properties`에서 특정 속성 값을 가져온다.
+ * 존재하지 않는 속성명을 조회할 수도 있으므로 방어적으로 `undefined`를 허용한다.
+ */
+function getProperty(
+  page: PageObjectResponse,
+  propertyName: string,
+): PageObjectResponse["properties"][string] | undefined {
+  return page.properties[propertyName];
+}
+
+/**
+ * `rich_text` 또는 `title` 타입 속성에서 plain_text를 안전하게 추출하는 헬퍼.
+ * 속성이 비어 있거나 타입이 다르면 빈 문자열을 반환한다.
+ */
+function getPlainText(
+  property: PageObjectResponse["properties"][string] | undefined,
+): string {
+  if (!property) {
+    return "";
+  }
+
+  if (property.type === "rich_text") {
+    return property.rich_text.map((item) => item.plain_text).join("");
+  }
+
+  if (property.type === "title") {
+    return property.title.map((item) => item.plain_text).join("");
+  }
+
+  return "";
+}
+
+/**
+ * `checkbox` 타입 속성에서 boolean 값을 안전하게 추출하는 헬퍼.
+ */
+function getCheckbox(
+  property: PageObjectResponse["properties"][string] | undefined,
+): boolean {
+  if (!property || property.type !== "checkbox") {
+    return false;
+  }
+
+  return property.checkbox;
+}
+
+/**
+ * `number` 타입 속성에서 숫자 값을 안전하게 추출하는 헬퍼.
+ */
+function getNumber(
+  property: PageObjectResponse["properties"][string] | undefined,
+): number | null {
+  if (!property || property.type !== "number") {
+    return null;
+  }
+
+  return property.number;
+}
+
+/**
+ * Notion 큐레이션 데이터베이스 전체를 조회해 `spotify_album_id`를 키로 하는
+ * `CurationDataMap`으로 변환한다. `spotify_album_id`가 비어 있는 레코드는 제외한다.
+ */
+export async function getCurationData(): Promise<CurationDataMap> {
+  const pages = await queryNotionDatabase();
+  const curationDataMap: CurationDataMap = new Map();
+
+  for (const page of pages) {
+    const spotifyAlbumId = getPlainText(getProperty(page, "spotify_album_id"));
+
+    // 키가 될 spotify_album_id가 없는 레코드는 Spotify 데이터와 연결할 수 없으므로 제외한다.
+    if (!spotifyAlbumId) {
+      continue;
+    }
+
+    const curationData: CurationData = {
+      spotifyAlbumId,
+      highlight: getCheckbox(getProperty(page, "highlight")),
+      fanNote: getPlainText(getProperty(page, "fan_note")),
+      rating: getNumber(getProperty(page, "rating")),
+    };
+
+    curationDataMap.set(spotifyAlbumId, curationData);
+  }
+
+  return curationDataMap;
 }
