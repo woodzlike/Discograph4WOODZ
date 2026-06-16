@@ -12,11 +12,11 @@
 
 ### 작업 목록
 
-- [ ] `.env.local` 생성 — Spotify Client ID/Secret, Notion API Key, Notion Database ID 세팅
-- [ ] `lib/spotify.ts` — Spotify Client Credentials Flow 토큰 발급 및 fetch 래퍼 작성
-- [ ] `lib/notion.ts` — Notion API 클라이언트 초기화 및 fetch 래퍼 작성
-- [ ] 공통 타입 정의 (`types/spotify.ts`, `types/notion.ts`) — Album, Track, CurationData 인터페이스
-- [ ] `next.config.ts` — Spotify 이미지 도메인(`i.scdn.co`) 허용 설정
+- [x] `.env.local` 생성 — Spotify Client ID/Secret, Notion API Key, Notion Database ID 세팅
+- [x] `lib/spotify.ts` — Spotify Client Credentials Flow 토큰 발급 및 fetch 래퍼 작성
+- [x] `lib/notion.ts` — Notion API 클라이언트 초기화 및 fetch 래퍼 작성
+- [x] 공통 타입 정의 (`types/spotify.ts`, `types/notion.ts`) — Album, Track, CurationData 인터페이스
+- [x] `next.config.ts` — Spotify 이미지 도메인(`i.scdn.co`) 허용 설정
 
 ### 완료 기준
 
@@ -35,13 +35,13 @@
 
 ### 작업 목록
 
-- [ ] Spotify API 함수 구현
+- [x] Spotify API 함수 구현
   - `getArtist()` — WOODZ 아티스트 정보 (프로필 이미지, 팔로워 수)
   - `getArtistAlbums()` — 전체 앨범/EP/싱글 목록
   - `getAlbumTracks()` — 앨범별 트랙리스트
-- [ ] Notion API 함수 구현
+- [x] Notion API 함수 구현
   - `getCurationData()` — DB 전체 조회 후 `spotify_album_id` 기준 Map으로 변환
-- [ ] 공통 UI 컴포넌트
+- [x] 공통 UI 컴포넌트
   - `AlbumCard` — 커버 이미지, 앨범명, 발매연도, 추천 배지, 별점 표시
   - `StarRating` — 1~5점 별점 렌더러
   - `FilterTabs` — 전체 / 정규앨범 / EP / 싱글 탭
@@ -65,14 +65,9 @@
 
 - [ ] **메인 페이지 (`/`)** 구현
   - `ArtistHeader` 렌더링 (Spotify 아티스트 데이터)
-  - `FilterTabs` + 탭 상태에 따른 앨범 목록 필터링
+  - `AlbumGrid`(신규, 클라이언트 컴포넌트) — `FilterTabs` 상태를 들고 `AlbumCard` 그리드를 필터링해 렌더링
   - `AlbumCard` 그리드 렌더링 (Spotify + Notion 데이터 병합)
   - Notion 추천 배지(`highlight: true`) 오버레이
-- [ ] **앨범 상세 페이지 (`/album/[id]`)** 구현
-  - 앨범 커버, 제목, 발매일, 레이블 표시
-  - 트랙리스트 (트랙 번호, 곡명, 재생 시간 포맷팅)
-  - "Spotify에서 듣기" 외부 링크 버튼
-  - Notion 팬 에디토리얼 노트 섹션 (데이터 있을 때만 표시)
 - [ ] Next.js Server Component로 API 호출 처리 (클라이언트에 키 노출 방지)
 
 ### 완료 기준
