@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# 로컬 MCP 도구 (별도 git 저장소, 프로젝트 소스 아님)
+/mcp-shrimp-task-manager/
+/shrimp_data/
